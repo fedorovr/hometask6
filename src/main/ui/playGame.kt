@@ -7,7 +7,7 @@ import java.io.File
 
 
 fun defaultFilePath(): String {
-    val fileName = "level01.txt"
+    val fileName = "level03.txt"
     val path = "levels/bloxorz/"
 //    val fileName = "bridgeLevel08.txt"
 //    val fileName = "lightCellsLevel1.txt"

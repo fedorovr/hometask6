@@ -1,20 +1,30 @@
 package _SurnameName
 
-import bridges.BridgeState
+import bridges.*
 import bridges.BridgeState.CLOSED
-import bridges.BridgesInfo
-import bridges.SwitchAction
 import bridges.SwitchAction.CHANGE
-import bridges.SwitchType
 import bridges.SwitchType.HALF_BLOCK
 
-// Your solution should live in this folder/package only (rename _SurnameName accordingly.)
-// You may add as many subpackages as you need, but the function 'bridgesInfo' below should live in the root _SurnameName package.
-// Please DON'T copy the class 'BridgesInfo' and others here.
+class BridgesInfoBuilder {
+    private val bridges: MutableMap<Char, Bridge> = mutableMapOf()
+    private val switches: MutableMap<Char, Switch> = mutableMapOf()
 
-fun bridgesInfo(init: () -> Unit): BridgesInfo = TODO()
+    fun bridge(name: Char, initialState: BridgeState = CLOSED, init: BridgeBuilder.() -> Unit = {}) {
+        Bridge(name, initialState).apply {
+            BridgeBuilder(this).init()
+            bridges[name] = this
+        }
+    }
 
-// These functions need receivers to works correctly. The declarations below are only used to have the compiled code.
+    inner class BridgeBuilder(val bridge: Bridge) {
+        fun switch(name: Char, action: SwitchAction = CHANGE, type: SwitchType = HALF_BLOCK) {
+            switches[name] = Switch(name, bridge, action, type)
+        }
+    }
 
-fun bridge(name: Char, initialState: BridgeState = CLOSED, init: () -> Unit = {}) { TODO() }
-fun switch(name: Char, action: SwitchAction = CHANGE, type: SwitchType = HALF_BLOCK) { TODO() }
+    fun build(): BridgesInfo {
+        return BridgesInfo(bridges, switches)
+    }
+}
+
+fun bridgesInfo(init: BridgesInfoBuilder.() -> Unit): BridgesInfo = BridgesInfoBuilder().apply { init() }.build()

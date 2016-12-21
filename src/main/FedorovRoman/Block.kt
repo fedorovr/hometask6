@@ -2,6 +2,9 @@ package FedorovRoman
 
 import bloxorz.Direction
 
+data class BlockPosition(val pos: Position, val pos2: Position?)
+data class Position(val row: Int, val col: Int)
+
 class Block(var blockPos: BlockPosition) {
     fun isOnPosition(r: Int, c: Int): Boolean =
             (blockPos.pos.row == r && blockPos.pos.col == c) ||

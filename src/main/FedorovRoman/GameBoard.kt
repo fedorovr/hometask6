@@ -2,15 +2,17 @@ package FedorovRoman
 
 import bloxorz.Direction
 import bridges.*
+import java.util.*
 
 class GameBoard(board: String, bridgesInfo: BridgesInfo?) {
+    val startPosition: Position
     private val gameBoard: MutableList<MutableList<GameElement?>> = mutableListOf()
     private val block: Block
     private val targetPosition: Position
     private val bridgesPositions: MutableMap<Position, Bridge> = mutableMapOf()
-    private val bridgesStates: MutableMap<Bridge, BridgeState> = mutableMapOf()
     private val switchersPositions: MutableMap<Position, Switch> = mutableMapOf()
-    val startPosition: Position
+    private var bridgesStates: MutableMap<Bridge, BridgeState> = mutableMapOf()
+    private val bridgeComparator = Comparator<Bridge> { b1, b2 -> b1.name.compareTo(b2.name) }
 
     val height: Int
         get() = gameBoard.size
@@ -71,6 +73,12 @@ class GameBoard(board: String, bridgesInfo: BridgesInfo?) {
         block.setOnPosition(blockPosition)
     }
 
+    fun setBridgesStates(compressedBridgesInfo: String) {
+        bridgesStates.toSortedMap(bridgeComparator).asIterable().zip(compressedBridgesInfo.asIterable()).forEach {
+            bridgesStates[it.first.key] = if (it.second == OPENED_BRIDGE_CHAR) BridgeState.OPENED else BridgeState.CLOSED
+        }
+    }
+
     fun moveBlock(direction: Direction): Unit {
         block.move(direction)
         if (isBlockOnLegalPosition()) {
@@ -120,11 +128,12 @@ class GameBoard(board: String, bridgesInfo: BridgesInfo?) {
                 false
             }
 
-    fun lastMoveWasSuccessful(): Boolean = !block.isStandingOnPosition(startPosition)
-
     fun hasWon(): Boolean = block.isStandingOnPosition(targetPosition)
 
     fun blockPosition(): BlockPosition = block.blockPos
+
+    fun copySortedBridgesStates(): SortedMap<Bridge, BridgeState> =
+            mutableMapOf<Bridge, BridgeState>().apply { putAll(bridgesStates) }.toSortedMap(bridgeComparator)
 
     override fun toString(): String {
         return buildString {

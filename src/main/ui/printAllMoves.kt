@@ -1,6 +1,6 @@
 package ui
 
-import _SurnameName.createGame
+import FedorovRoman.createGame
 
 
 fun main(args: Array<String>) {

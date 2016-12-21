@@ -1,6 +1,6 @@
 package bridges
 
-import _SurnameName.*
+import FedorovRoman.*
 import bridges.BridgeState.OPENED
 import bridges.SwitchAction.OPEN
 import bridges.SwitchAction.CLOSE
